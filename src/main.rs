@@ -41,7 +41,7 @@ async fn main() -> Result<()> {
     result.pop();
     let save_dir = result;
     let (downloader, (speed_state, ..)) =
-        HttpDownloaderBuilder::new(args.url, save_dir.clone())
+        HttpDownloaderBuilder::new(args.url, save_dir)
             .download_connection_count(args.connection_count)
             .chunk_size(args.chunk_size)
             .build((
