@@ -5,7 +5,7 @@ use std::time::{Duration, Instant};
 
 use anyhow::Result;
 use clap::{arg, Parser};
-use crossterm::cursor::{Hide, MoveToColumn, MoveToNextLine, MoveToPreviousLine};
+use crossterm::cursor::{Hide, MoveToColumn, MoveToNextLine, MoveToPreviousLine, Show};
 use crossterm::execute;
 use crossterm::style::Print;
 use crossterm::terminal::{Clear, ClearType};
@@ -37,11 +37,11 @@ struct Args {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
-    let result = std::env::current_exe()?;
-
-    let save_dir = result.join("../");
+    let mut result = std::env::current_exe()?;
+    result.pop();
+    let save_dir = result;
     let (downloader, (speed_state, ..)) =
-        HttpDownloaderBuilder::new(args.url, save_dir)
+        HttpDownloaderBuilder::new(args.url, save_dir.clone())
             .download_connection_count(args.connection_count)
             .chunk_size(args.chunk_size)
             .build((
@@ -109,6 +109,11 @@ async fn main() -> Result<()> {
     )?;
         println!("Save To: {}", file_path.display());
     }
+    execute!(
+        stdout(),
+        Show 
+    )?;
+
     Ok(())
 }
 
